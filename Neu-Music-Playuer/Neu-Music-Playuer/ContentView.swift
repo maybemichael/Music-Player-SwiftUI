@@ -12,8 +12,8 @@ class Song: ObservableObject {
     let title: String
     let artist: String
     let duration: TimeInterval
+    @Published var currentTime: TimeInterval
     let coverArt: UIImage
-    var currentTime: TimeInterval
     
     init(title: String = "Drake", artist: String = "Hold On, We're Going Home ft. Majid Jordan", duration: TimeInterval = 120, image: UIImage = UIImage(named: "BurningFlower")!, currentTime: TimeInterval = 60) {
         self.title = title
@@ -37,7 +37,7 @@ struct ContentView: View {
                 // This will hold every view on top of the background gradient
                 VStack {
                     HStack {
-                        GradientButton(imageName: "arrow.left")
+                        GradientButton(imageName: "arrow.left", size: 50, symbolConfig: .navButtonConfig)
                             .padding(.leading, 30)
                         Spacer()
                         Text("PLAYING NOW")
@@ -47,7 +47,7 @@ struct ContentView: View {
                         
                         
                         Spacer()
-                        GradientButton(imageName: "line.horizontal.3")
+                        GradientButton(imageName: "line.horizontal.3", size: 50, symbolConfig: .navButtonConfig)
                             .padding(.trailing, 30)
                     }
                     CoverArtView(size: geometry.size.width * 0.87)
@@ -64,11 +64,17 @@ struct ContentView: View {
                         .padding(.top, 40)
                     Spacer()
                     
-                    
-                    PlayPauseButton()
-                        .frame(width: 75, height: 75)
-                    
+                    HStack {
+                        Spacer()
+                        GradientButton(imageName: "backward.fill", size: 70, symbolConfig: .playbackButtonConfig)
+                        PlayPauseButton()
+                            .frame(width: 75, height: 75)
+                            .padding(.horizontal, 20)
+                        GradientButton(imageName: "forward.fill", size: 70, symbolConfig: .playbackButtonConfig)
+                        Spacer()
+                    }
                 }
+                .padding(.bottom, 60)
             }
         }
     }
@@ -101,6 +107,8 @@ struct PlayPauseButton: View {
                 
             }
         }
+        .shadow(color: Color.black.opacity(0.3), radius: 10, x: 5, y: 5)
+        .shadow(color: Color.white.opacity(0.1), radius: 10, x: -5, y: -5)
     }
     
     func colorsForIsPlaying() -> [Color] {
@@ -115,6 +123,8 @@ struct PlayPauseButton: View {
 struct GradientButton: View {
     
     var imageName: String
+    var size: CGFloat
+    var symbolConfig: UIImage.SymbolConfiguration
     
     var body: some View {
         Button(action: {
@@ -126,13 +136,11 @@ struct GradientButton: View {
                     .frame(width: 50, height: 50)
                     .clipShape(Circle())
                 
-                Image(systemName: imageName)
-                    .resizable()
+                Image(uiImage: UIImage(systemName: imageName, withConfiguration: symbolConfig)!)
                     .font(Font.system(.headline).weight(.semibold))
                     .aspectRatio(contentMode: .fit)
                     .foregroundColor(.buttonColor)
-                    .frame(width: 23, height: 23)
-                    .padding(13)
+                    .frame(width: size * 0.95, height: size * 0.95)
                     .background(LinearGradient(gradient: Gradient(colors: [.bgGradientTop, .bgGradientBottom]), startPoint: .topLeading, endPoint: .bottomTrailing))
                     .clipShape(Circle())
             }
@@ -146,7 +154,7 @@ struct GradientButton: View {
 
 struct CoverArtView: View {
     
-    var size: CGFloat = 300
+    var size: CGFloat = 2755
     
     var body: some View {
         ZStack {
@@ -173,14 +181,21 @@ struct PlayerProgressView: View {
     
     @ObservedObject var song: Song
     
+    var dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "m:ss"
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return formatter
+    }()
+    
     var trackRadius: CGFloat = 3
     
     var body: some View {
-        VStack {
+        VStack(spacing: 5) {
             HStack {
-                Text("\(Int(self.song.currentTime))")
+                Text("\(formattedTimeFor(timeInterval: song.currentTime))")
                 Spacer()
-                Text("\(Int(self.song.duration))")
+                Text("\(formattedTimeFor(timeInterval: song.duration))")
             }
             .foregroundColor(.buttonColor)
             .font(Font.system(.caption))
@@ -199,17 +214,45 @@ struct PlayerProgressView: View {
                         Spacer()
                     }
                 }
-                Circle()
-                    .fill(RadialGradient(gradient:
-                        Gradient(stops: [Gradient.Stop(color: .trackYellow, location: 0.0),
-                        Gradient.Stop(color: .bgGradientBottom, location: 0.000000000001),
-                        Gradient.Stop(color: .bgGradientTop, location: 1)]),
-                        center: .center, startRadius: 5, endRadius: 20))
-                    .frame(width: 40, height: 40)
+                GeometryReader { geometry in
+                    HStack {
+                        Circle()
+                            .fill(RadialGradient(gradient: Gradient(stops:
+                                [Gradient.Stop(color: .trackYellow, location: 0.0),
+                                Gradient.Stop(color: .bgGradientBottom, location: 0.00001),
+                                Gradient.Stop(color: .bgGradientTop, location: 1),]),
+                                center: .center, startRadius: 6, endRadius: 40))
+                            .frame(width: 40, height: 40)
+                            .padding(.leading, geometry.size.width * self.percentagePlayedForSong() - 15)
+                            .gesture(
+                                DragGesture()
+                                    .onChanged({ value in
+                                        self.song.currentTime = self.time(for: value.location.x, in: geometry.size.width)
+                                    })
+                        )
+                        Spacer(minLength: 0)
+                    }
+                }
             }
-            
+            .frame(height: 40)
         }
         .padding(.horizontal, UIScreen.main.bounds.width * 0.07)
+    }
+    
+    func formattedTimeFor(timeInterval: TimeInterval) -> String {
+        let date = Date(timeIntervalSinceReferenceDate: timeInterval)
+        return dateFormatter.string(from: date)
+    }
+    
+    func time(for location: CGFloat, in width: CGFloat) -> TimeInterval {
+        let percentage = location / width
+        let time = song.duration * TimeInterval(percentage)
+        if time < 0 {
+            return 0
+        } else if time > song.duration {
+            return song.duration
+        }
+        return time
     }
     
     func percentagePlayedForSong() -> CGFloat {
@@ -218,3 +261,12 @@ struct PlayerProgressView: View {
 }
 
 
+
+//Circle()
+//.fill(RadialGradient(gradient:
+//    Gradient(stops: [Gradient.Stop(color: .trackYellow, location: 0.0),
+//    Gradient.Stop(color: .bgGradientBottom, location: 0.000000000001),
+//    Gradient.Stop(color: .bgGradientTop, location: 1)]),
+//    center: .center, startRadius: 5, endRadius: 40))
+//.frame(width: 40, height: 40)
+//.padding(.leading, )

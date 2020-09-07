@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4C515F5225061F9600EFA57F /* UIImage+SymbolConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C515F5125061F9600EFA57F /* UIImage+SymbolConfig.swift */; };
+		4C515F542506294400EFA57F /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C515F532506294400EFA57F /* SearchView.swift */; };
 		4CEB77752504D1A20051A7DB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEB77742504D1A20051A7DB /* AppDelegate.swift */; };
 		4CEB77772504D1A20051A7DB /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEB77762504D1A20051A7DB /* SceneDelegate.swift */; };
 		4CEB77792504D1A20051A7DB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEB77782504D1A20051A7DB /* ContentView.swift */; };
@@ -36,6 +38,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4C515F5125061F9600EFA57F /* UIImage+SymbolConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+SymbolConfig.swift"; sourceTree = "<group>"; };
+		4C515F532506294400EFA57F /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		4CEB77712504D1A20051A7DB /* Neu-Music-Playuer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Neu-Music-Playuer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEB77742504D1A20051A7DB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4CEB77762504D1A20051A7DB /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -104,7 +108,9 @@
 				4CEB77742504D1A20051A7DB /* AppDelegate.swift */,
 				4CEB77762504D1A20051A7DB /* SceneDelegate.swift */,
 				4CEB77A42504E1D50051A7DB /* Colors.swift */,
+				4C515F5125061F9600EFA57F /* UIImage+SymbolConfig.swift */,
 				4CEB77782504D1A20051A7DB /* ContentView.swift */,
+				4C515F532506294400EFA57F /* SearchView.swift */,
 				4CEB777A2504D1A30051A7DB /* Assets.xcassets */,
 				4CEB777F2504D1A30051A7DB /* LaunchScreen.storyboard */,
 				4CEB77822504D1A30051A7DB /* Info.plist */,
@@ -270,9 +276,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C515F5225061F9600EFA57F /* UIImage+SymbolConfig.swift in Sources */,
 				4CEB77752504D1A20051A7DB /* AppDelegate.swift in Sources */,
 				4CEB77A52504E1D50051A7DB /* Colors.swift in Sources */,
 				4CEB77772504D1A20051A7DB /* SceneDelegate.swift in Sources */,
+				4C515F542506294400EFA57F /* SearchView.swift in Sources */,
 				4CEB77792504D1A20051A7DB /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

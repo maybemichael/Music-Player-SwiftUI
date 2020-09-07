@@ -17,4 +17,6 @@ extension Color {
     static let pauseLightOrange = Color("PauseLightOrange")
     static let playLightGreen = Color("PlayLightGreen")
     static let playDarkGreen = Color("PlayDarkGreen")
+    static let trackOrange = Color("TrackOrange")
+    static let trackYellow = Color("TrackYellow")
 }
